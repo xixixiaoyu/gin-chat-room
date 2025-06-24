@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- 登录页面 -->
+        <div id="login-page" class="page active">
+            <div class="login-container">
+                <div class="login-form">
+                    <h2><i class="fas fa-comments"></i> 聊天室</h2>
+                    
+                    <div class="form-tabs">
+                        <button class="tab-btn active" onclick="showLogin()">登录</button>
+                        <button class="tab-btn" onclick="showRegister()">注册</button>
+                    </div>
+
+                    <!-- 登录表单 -->
+                    <form id="login-form" class="auth-form active">
+                        <div class="form-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="login-username" placeholder="用户名或邮箱" required>
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="login-password" placeholder="密码" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> 登录
+                        </button>
+                    </form>
+
+                    <!-- 注册表单 -->
+                    <form id="register-form" class="auth-form">
+                        <div class="form-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="register-username" placeholder="用户名" required>
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="register-email" placeholder="邮箱" required>
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-user-tag"></i>
+                            <input type="text" id="register-nickname" placeholder="昵称（可选）">
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="register-password" placeholder="密码" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> 注册
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 聊天室列表页面 -->
+        <div id="rooms-page" class="page">
+            <div class="header">
+                <h1><i class="fas fa-comments"></i> 聊天室</h1>
+                <div class="header-actions">
+                    <button id="create-room-btn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> 创建房间
+                    </button>
+                    <button id="logout-btn" class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i> 退出
+                    </button>
+                </div>
+            </div>
+
+            <div class="rooms-container">
+                <div class="rooms-search">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="rooms-search" placeholder="搜索房间...">
+                    </div>
+                </div>
+
+                <div id="rooms-list" class="rooms-list">
+                    <!-- 房间列表将在这里动态加载 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 聊天页面 -->
+        <div id="chat-page" class="page">
+            <div class="chat-header">
+                <button id="back-to-rooms" class="btn btn-icon">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="room-info">
+                    <h3 id="current-room-name">房间名称</h3>
+                    <span id="online-count">0 人在线</span>
+                </div>
+                <button id="room-settings" class="btn btn-icon">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-main">
+                    <div id="messages-container" class="messages-container">
+                        <!-- 消息将在这里显示 -->
+                    </div>
+                    
+                    <div class="message-input-container">
+                        <div class="message-input">
+                            <input type="text" id="message-input" placeholder="输入消息..." maxlength="500">
+                            <button id="send-btn" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-sidebar">
+                    <div class="sidebar-header">
+                        <h4><i class="fas fa-users"></i> 在线用户</h4>
+                    </div>
+                    <div id="online-users" class="online-users">
+                        <!-- 在线用户列表 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 创建房间模态框 -->
+        <div id="create-room-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>创建房间</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <form id="create-room-form">
+                    <div class="form-group">
+                        <label>房间名称</label>
+                        <input type="text" id="room-name" required maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label>房间描述</label>
+                        <textarea id="room-description" maxlength="500"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="room-private"> 私有房间
+                        </label>
+                    </div>
+                    <div class="form-group" id="password-group" style="display: none;">
+                        <label>房间密码</label>
+                        <input type="password" id="room-password">
+                    </div>
+                    <div class="form-group">
+                        <label>最大成员数</label>
+                        <input type="number" id="room-max-members" value="100" min="2" max="1000">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary modal-cancel">取消</button>
+                        <button type="submit" class="btn btn-primary">创建</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 加载提示 -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>加载中...</p>
+        </div>
+
+        <!-- 消息提示 -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
